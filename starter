@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Nome do projeto, aplicativo e virtual environment
+PROJECT_NAME="django_project"
+APP_NAME="django_api"
+ENV_NAME="djangoenv"
+ENV_PATH="/home/alexandre/git/DjangoAPI/$ENV_NAME"
+
+# Função para criar e ativar o ambiente virtual
+function etapa_1() {
+    # Criar a virtual environment
+    python3 -m venv $ENV_NAME
+    echo "Criado venv"
+
+    # Ativar a virtual environment
+    source $ENV_PATH/bin/activate
+    echo "Ativado venv: $VIRTUAL_ENV"  # Mostra o caminho da venv ativa
+
+    # Verificar se a venv está ativa
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+        echo "Erro: Virtual environment não ativada."
+        exit 1
+    fi
+}
+
+# Função para instalar as dependências
+function etapa_2() {
+    # Ativar a virtual environment
+    source $ENV_PATH/bin/activate
+    echo "Use o comando >>> source $ENV_PATH/bin/activate"  # Mostra o caminho da venv ativa
+}
+
+function etapa_3() {
+    # Instalar dependências
+    pip install django djangorestframework
+}
+
+# Função para criar o projeto e o aplicativo Django
+function etapa_4() {
+    # Criar o projeto Django
+    django-admin startproject $PROJECT_NAME
+
+    # Mudar para o diretório do projeto
+    cd $PROJECT_NAME
+
+    # Criar o aplicativo
+    python manage.py startapp $APP_NAME
+
+    # Migrar o projeto
+    python manage.py migrate
+
+    # Rodar o servidor
+    python manage.py runserver
+
+}
+
+# Verificar qual etapa foi chamada
+case $1 in
+    1)
+        etapa_1
+        ;;
+    2)
+        etapa_2
+        ;;
+    3)
+        etapa_3
+        ;;
+    4)
+        etapa_4
+        ;;
+    *)
+        echo "Uso: $0 {1|2|3}"
+        echo "1: Criar e ativar a virtual environment"
+        echo "2: Instalar dependências"
+        echo "3: Criar projeto e aplicativo Django"
+        exit 1
+        ;;
+esac
